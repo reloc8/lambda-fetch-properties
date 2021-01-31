@@ -1,0 +1,18 @@
+{
+  "data": {
+    "propertiesByBoundingBoxAndFilter": {
+      "properties": [
+        {
+          "id": "5ffc13f406610351150ae45b",
+          "price": 350000,
+          "location": {
+            "latitude": 45.0519856,
+            "longitude": 7.34602,
+            "geohash": "u0j0r1mny"
+          }
+        }
+      ],
+      "page": "5ffc13f406610351150ae45b"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  propertiesByBoundingBoxAndFilter(
+    boundingBox: {
+        bottomLeft: {
+            latitude: 44.0567,
+            longitude: 5.3846
+        },
+        topRight: {
+            latitude: 46.1102,
+            longitude: 9.9208
+        }
+    },
+    filter: {
+        nRooms: {
+            min: 2,
+            max: 5
+        },
+        surface: {
+            min: 40,
+            max: 200
+        },
+        condition: "BEST"
+    }
+  ) {
+    properties {
+        id
+        price
+        location {
+            latitude
+            longitude
+            geohash
+        }
+    }
+    page
+  }
+}
