@@ -22,6 +22,8 @@ class TestFetchPropertiesLambda(unittest.TestCase):
         mongodb_uri = MONGODB_CONTAINER.get_connection_url()
         os.environ['MONGODB_URI'] = mongodb_uri
         os.environ['MONGODB_MAX_PAGE_SIZE'] = '100'
+        os.environ['MONGODB_DATABASE'] = ''
+        os.environ['MONGODB_COLLECTION'] = ''
 
         with open('resources/collection-1.json', 'r') as file:
             collection = json.load(file)
@@ -56,6 +58,8 @@ class TestFetchPropertiesLambda(unittest.TestCase):
 
         actual_response = LAMBDA_HANDLER.run(event=event, context=None)
 
+        self.assertEqual('timeSeriesDB', mongodb_database)
+        self.assertEqual('properties', mongodb_collection)
         self.assertDictEqual(expected_response, actual_response)
 
         mock_mongodb_client.drop_database(mongodb_database)
@@ -65,6 +69,8 @@ class TestFetchPropertiesLambda(unittest.TestCase):
         mongodb_uri = MONGODB_CONTAINER.get_connection_url()
         os.environ['MONGODB_URI'] = mongodb_uri
         os.environ['MONGODB_MAX_PAGE_SIZE'] = '2'
+        os.environ['MONGODB_DATABASE'] = ''
+        os.environ['MONGODB_COLLECTION'] = ''
 
         with open('resources/collection-2.json', 'r') as file:
             collection = json.load(file)
@@ -99,6 +105,8 @@ class TestFetchPropertiesLambda(unittest.TestCase):
 
         actual_response = LAMBDA_HANDLER.run(event=event, context=None)
 
+        self.assertEqual('timeSeriesDB', mongodb_database)
+        self.assertEqual('properties', mongodb_collection)
         self.assertDictEqual(expected_response, actual_response)
 
         mock_mongodb_client.drop_database(mongodb_database)
