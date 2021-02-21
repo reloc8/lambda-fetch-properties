@@ -21,16 +21,53 @@ class PropertiesPage(graphene.ObjectType):
     page = graphene.String()
 
 
-class Point(graphene.InputObjectType):
+class PriceStatistics(graphene.ObjectType):
+
+    min = graphene.Int()
+    max = graphene.Int()
+    avg = graphene.Float()
+
+
+class Point(graphene.ObjectType):
 
     latitude = graphene.Float()
     longitude = graphene.Float()
 
 
-class BoundingBox(graphene.InputObjectType):
+class LocationBoundingBox(graphene.ObjectType):
 
-    bottom_left = graphene.InputField(Point)
-    top_right = graphene.InputField(Point)
+    bottom_left = graphene.Field(Point)
+    top_right = graphene.Field(Point)
+
+
+class LocalStatistics(graphene.ObjectType):
+
+    geohash = graphene.String()
+    bounding_box = graphene.Field(LocationBoundingBox)
+    price = graphene.Field(PriceStatistics)
+
+
+class GlobalStatistics(graphene.ObjectType):
+
+    price = graphene.Field(PriceStatistics)
+
+
+class Statistics(graphene.ObjectType):
+
+    local_statistics = graphene.List(LocalStatistics)
+    global_statistics = graphene.Field(GlobalStatistics)
+
+
+class SearchLocation(graphene.InputObjectType):
+
+    latitude = graphene.Float()
+    longitude = graphene.Float()
+
+
+class SearchBoundingBox(graphene.InputObjectType):
+
+    bottom_left = graphene.InputField(SearchLocation)
+    top_right = graphene.InputField(SearchLocation)
 
 
 class IntRange(graphene.InputObjectType):

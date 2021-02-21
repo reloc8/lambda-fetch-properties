@@ -5,14 +5,16 @@ import pymongo
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
-from . import BoundingBox, PropertyFilter, PropertiesPage
-from ..mapper import PropertyMapper, PropertiesPageMapper
+from . import SearchBoundingBox, PropertyFilter, PropertiesPage, Statistics
+from ..mapper import PropertyMapper, PropertiesPageMapper, LocalStatisticsMapper, PriceStatisticsMapper, \
+    LocationBoundingBoxMapper, GlobalStatisticsMapper, StatisticsMapper
 from ..mongodb import MongoDBConnection, MONGODB_CONNECTION
 
 
 MONGODB_CLIENT = pymongo.MongoClient(MONGODB_CONNECTION.uri)
 
 MAX_PAGE_SIZE = int(os.getenv('MONGODB_MAX_PAGE_SIZE'))
+MAX_COLLECTION_SIZE = 20_000
 
 
 @dataclass
@@ -23,10 +25,18 @@ class Resolver(ABC):
     @abstractmethod
     def find_properties_by_bounding_box_and_filter(
             self,
-            bounding_box: BoundingBox,
+            bounding_box: SearchBoundingBox,
             filter: PropertyFilter,
             page: graphene.String
     ) -> PropertiesPage:
+
+        pass
+
+    @abstractmethod
+    def find_statistics_by_filter(
+            self,
+            filter: PropertyFilter
+    ) -> Statistics:
 
         pass
 
@@ -42,7 +52,7 @@ class MongoDBResolver(Resolver):
 
     def find_properties_by_bounding_box_and_filter(
             self,
-            bounding_box: BoundingBox,
+            bounding_box: SearchBoundingBox,
             filter: PropertyFilter,
             page: graphene.String
     ) -> PropertiesPage:
@@ -93,6 +103,118 @@ class MongoDBResolver(Resolver):
         properties_page = PropertiesPageMapper.map(properties=properties)
 
         return properties_page
+
+    def find_statistics_by_filter(self, filter: PropertyFilter) -> Statistics:
+
+        database = self.mongodb_connection.database
+        collection = self.mongodb_connection.collection
+
+        geohash_precision = 7
+        match_filter = {
+                "$match": {
+                    "n_rooms": {
+                        "$gte": filter.n_rooms.min,
+                        "$lte": filter.n_rooms.max
+                    },
+                    "surface": {
+                        "$gte": filter.surface.min,
+                        "$lte": filter.surface.max
+                    },
+                    "condition": filter.condition
+                }
+            }
+        sort_filter = {"$sort": {"published_on": -1}}
+        limit_filter = {"$limit": MAX_COLLECTION_SIZE}
+
+        local_results = self.mongodb_client[database][collection].aggregate([
+            match_filter,
+            sort_filter,
+            limit_filter,
+            {
+                "$group": {
+                    "_id": {
+                        "$substr": ["$location.geohash", 0, geohash_precision]
+                    },
+                    "price_min": {
+                        "$min": "$price"
+                    },
+                    "price_max": {
+                        "$max": "$price"
+                    },
+                    "price_avg": {
+                        "$avg": "$price"
+                    }
+                }
+            },
+            {
+                "$project": {
+                    "_id": 0,
+                    "geohash": "$_id",
+                    "price": {
+                        "min": "$price_min",
+                        "max": "$price_max",
+                        "avg": "$price_avg"
+                    }
+                }
+            }
+        ])
+
+        global_results = self.mongodb_client[database][collection].aggregate([
+            match_filter,
+            sort_filter,
+            limit_filter,
+            {
+                "$group": {
+                    "_id": None,
+                    "price_min": {
+                        "$min": "$price"
+                    },
+                    "price_max": {
+                        "$max": "$price"
+                    },
+                    "price_avg": {
+                        "$avg": "$price"
+                    }
+                }
+            },
+            {
+                "$project": {
+                    "_id": 0,
+                    "price": {
+                        "min": "$price_min",
+                        "max": "$price_max",
+                        "avg": "$price_avg"
+                    }
+                }
+            }
+        ])
+
+        local_statistics = []
+        for result in local_results:
+            price_statistics = PriceStatisticsMapper.map(
+                min_price=result.get('price').get('min'),
+                max_price=result.get('price').get('max'),
+                avg_price=result.get('price').get('avg')
+            )
+            geohash = result.get('geohash')
+            bounding_box = LocationBoundingBoxMapper.map(geohash=geohash)
+            local_statistics.append(LocalStatisticsMapper.map(
+                price_statistics=price_statistics,
+                geohash=geohash,
+                bounding_box=bounding_box
+            ))
+
+        global_result = list(global_results)[0]
+        global_price_statistics = PriceStatisticsMapper.map(
+            min_price=global_result.get('price').get('min'),
+            max_price=global_result.get('price').get('max'),
+            avg_price=global_result.get('price').get('avg')
+        )
+        global_statistics = GlobalStatisticsMapper.map(price_statistics=global_price_statistics)
+
+        result = StatisticsMapper.map(local_statistics=local_statistics, global_statistics=global_statistics)
+
+        return result
 
 
 RESOLVER_MONGODB = MongoDBResolver(
