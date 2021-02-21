@@ -1,0 +1,41 @@
+{
+  statisticsByFilter(
+    filter: {
+        nRooms: {
+            min: 2,
+            max: 5
+        },
+        surface: {
+            min: 40,
+            max: 200
+        },
+        condition: "BEST"
+    }
+  ) {
+    localStatistics {
+        geohash
+        boundingBox {
+            bottomLeft {
+                latitude
+                longitude
+            }
+            topRight {
+                latitude
+                longitude
+            }
+        }
+        price {
+            min
+            max
+            avg
+        }
+    }
+    globalStatistics {
+        price {
+            min
+            max
+            avg
+        }
+    }
+  }
+}
