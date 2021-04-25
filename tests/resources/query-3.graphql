@@ -14,16 +14,6 @@
   ) {
     localStatistics {
         geohash
-        boundingBox {
-            bottomLeft {
-                latitude
-                longitude
-            }
-            topRight {
-                latitude
-                longitude
-            }
-        }
         price {
             min
             max

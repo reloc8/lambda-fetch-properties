@@ -1,8 +1,7 @@
-import libgeohash
 from typing import Any, AnyStr, Dict, List
 
 from ..schema import Property, PropertyLocation, PropertiesPage, LocalStatistics, GlobalStatistics, Statistics, \
-    PriceStatistics, LocationBoundingBox, Point
+    PriceStatistics
 
 
 class PropertyMapper:
@@ -54,12 +53,11 @@ class StatisticsMapper:
 class LocalStatisticsMapper:
 
     @staticmethod
-    def map(price_statistics: PriceStatistics, geohash: AnyStr, bounding_box: LocationBoundingBox) -> LocalStatistics:
+    def map(price_statistics: PriceStatistics, geohash: AnyStr) -> LocalStatistics:
 
         mapped = LocalStatistics()
         mapped.price = price_statistics
         mapped.geohash = geohash
-        mapped.bounding_box = bounding_box
 
         return mapped
 
@@ -84,25 +82,5 @@ class PriceStatisticsMapper:
         mapped.min = min_price
         mapped.max = max_price
         mapped.avg = avg_price
-
-        return mapped
-
-
-class LocationBoundingBoxMapper:
-
-    @staticmethod
-    def map(geohash: AnyStr) -> LocationBoundingBox:
-
-        reversed_geohash = libgeohash.bbox(geohash)
-
-        mapped = LocationBoundingBox()
-        top_right = Point()
-        top_right.latitude = reversed_geohash.get('n')
-        top_right.longitude = reversed_geohash.get('e')
-        mapped.top_right = top_right
-        bottom_left = Point()
-        bottom_left.latitude = reversed_geohash.get('s')
-        bottom_left.longitude = reversed_geohash.get('w')
-        mapped.bottom_left = bottom_left
 
         return mapped

@@ -4,16 +4,6 @@
       "localStatistics": [
         {
           "geohash": "u0j0r1m",
-          "boundingBox": {
-            "bottomLeft": {
-              "latitude": 45.050811767578125,
-              "longitude": 7.345733642578125
-            },
-            "topRight": {
-              "latitude": 45.05218505859375,
-              "longitude": 7.34710693359375
-            }
-          },
           "price": {
             "min": 350000,
             "max": 350000,
@@ -22,16 +12,6 @@
         },
         {
           "geohash": "u0j3xvj",
-          "boundingBox": {
-            "bottomLeft": {
-              "latitude": 45.2911376953125,
-              "longitude": 7.730255126953125
-            },
-            "topRight": {
-              "latitude": 45.292510986328125,
-              "longitude": 7.73162841796875
-            }
-          },
           "price": {
             "min": 279000,
             "max": 279000,
@@ -40,16 +20,6 @@
         },
         {
           "geohash": "u0j2w6u",
-          "boundingBox": {
-            "bottomLeft": {
-              "latitude": 45.102996826171875,
-              "longitude": 7.6629638671875
-            },
-            "topRight": {
-              "latitude": 45.1043701171875,
-              "longitude": 7.664337158203125
-            }
-          },
           "price": {
             "min": 135000,
             "max": 135000,
