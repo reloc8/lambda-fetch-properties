@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 from . import SearchBoundingBox, PropertyFilter, PropertiesPage, Statistics
 from ..mapper import PropertyMapper, PropertiesPageMapper, LocalStatisticsMapper, PriceStatisticsMapper, \
-    LocationBoundingBoxMapper, GlobalStatisticsMapper, StatisticsMapper
+    GlobalStatisticsMapper, StatisticsMapper
 from ..mongodb import MongoDBConnection, MONGODB_CONNECTION
 
 
@@ -197,11 +197,9 @@ class MongoDBResolver(Resolver):
                 avg_price=result.get('price').get('avg')
             )
             geohash = result.get('geohash')
-            bounding_box = LocationBoundingBoxMapper.map(geohash=geohash)
             local_statistics.append(LocalStatisticsMapper.map(
                 price_statistics=price_statistics,
-                geohash=geohash,
-                bounding_box=bounding_box
+                geohash=geohash
             ))
 
         global_result = list(global_results)[0]

@@ -43,7 +43,6 @@ class LocationBoundingBox(graphene.ObjectType):
 class LocalStatistics(graphene.ObjectType):
 
     geohash = graphene.String()
-    bounding_box = graphene.Field(LocationBoundingBox)
     price = graphene.Field(PriceStatistics)
 
 
