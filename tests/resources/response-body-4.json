@@ -1,0 +1,14 @@
+{
+  "data": {
+    "statisticsByFilter": {
+      "localStatistics": [],
+      "globalStatistics": {
+        "price": {
+          "min": null,
+          "max": null,
+          "avg": null
+        }
+      }
+    }
+  }
+}

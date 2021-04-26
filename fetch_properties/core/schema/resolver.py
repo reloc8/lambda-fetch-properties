@@ -202,11 +202,21 @@ class MongoDBResolver(Resolver):
                 geohash=geohash
             ))
 
-        global_result = list(global_results)[0]
+        global_results = list(global_results)
+
+        min_price = None
+        max_price = None
+        avg_price = None
+        if len(global_results) > 0:
+            global_result = global_results[0]
+            min_price = global_result.get('price').get('min')
+            max_price = global_result.get('price').get('max')
+            avg_price = global_result.get('price').get('avg')
+
         global_price_statistics = PriceStatisticsMapper.map(
-            min_price=global_result.get('price').get('min'),
-            max_price=global_result.get('price').get('max'),
-            avg_price=global_result.get('price').get('avg')
+            min_price=min_price,
+            max_price=max_price,
+            avg_price=avg_price
         )
         global_statistics = GlobalStatisticsMapper.map(price_statistics=global_price_statistics)
 
