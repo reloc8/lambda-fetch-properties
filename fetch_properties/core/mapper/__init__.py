@@ -1,7 +1,7 @@
 from typing import Any, AnyStr, Dict, List
 
 from ..schema import Property, PropertyLocation, PropertiesPage, LocalStatistics, GlobalStatistics, Statistics, \
-    PriceStatistics
+    PriceStatistics, LocationBoundingBox
 
 
 class PropertyMapper:
@@ -53,11 +53,13 @@ class StatisticsMapper:
 class LocalStatisticsMapper:
 
     @staticmethod
-    def map(price_statistics: PriceStatistics, geohash: AnyStr) -> LocalStatistics:
+    def map(price_statistics: PriceStatistics, geohash: AnyStr, bounding_box: LocationBoundingBox, score) -> LocalStatistics:
 
         mapped = LocalStatistics()
         mapped.price = price_statistics
         mapped.geohash = geohash
+        mapped.bounding_box = bounding_box
+        mapped.score = score
 
         return mapped
 
