@@ -1,11 +1,12 @@
 import bson
 import graphene
 import os
+import pygeohash
 import pymongo
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
-from . import SearchBoundingBox, PropertyFilter, PropertiesPage, Statistics
+from . import SearchBoundingBox, PropertyFilter, PropertiesPage, Statistics, LocationBoundingBox, Point
 from ..mapper import PropertyMapper, PropertiesPageMapper, LocalStatisticsMapper, PriceStatisticsMapper, \
     GlobalStatisticsMapper, StatisticsMapper
 from ..mongodb import MongoDBConnection, MONGODB_CONNECTION
@@ -189,19 +190,6 @@ class MongoDBResolver(Resolver):
             }
         ])
 
-        local_statistics = []
-        for result in local_results:
-            price_statistics = PriceStatisticsMapper.map(
-                min_price=result.get('price').get('min'),
-                max_price=result.get('price').get('max'),
-                avg_price=result.get('price').get('avg')
-            )
-            geohash = result.get('geohash')
-            local_statistics.append(LocalStatisticsMapper.map(
-                price_statistics=price_statistics,
-                geohash=geohash
-            ))
-
         global_results = list(global_results)
 
         min_price = None
@@ -220,9 +208,61 @@ class MongoDBResolver(Resolver):
         )
         global_statistics = GlobalStatisticsMapper.map(price_statistics=global_price_statistics)
 
+        local_statistics = []
+        for result in local_results:
+            price_statistics = PriceStatisticsMapper.map(
+                min_price=result.get('price').get('min'),
+                max_price=result.get('price').get('max'),
+                avg_price=result.get('price').get('avg')
+            )
+            geohash = result.get('geohash')
+            local_statistics.append(LocalStatisticsMapper.map(
+                price_statistics=price_statistics,
+                geohash=geohash,
+                bounding_box=self.get_bounding_box(geohash),
+                score=self.get_score(result.get('price').get('avg'), avg_price)
+            ))
+
         result = StatisticsMapper.map(local_statistics=local_statistics, global_statistics=global_statistics)
 
         return result
+
+    @staticmethod
+    def get_bounding_box(geohash) -> LocationBoundingBox:
+
+        bounding_box = LocationBoundingBox()
+        bounding_box.top_right = Point()
+        bounding_box.bottom_left = Point()
+
+        if geohash is not None:
+
+            decoded = pygeohash.decode_exactly(geohash)
+            center_latitude = decoded[0]
+            center_longitude = decoded[1]
+            epsilon_latitude = decoded[2]
+            epsilon_longitude = decoded[3]
+
+            bounding_box.top_right.latitude = center_latitude + epsilon_latitude
+            bounding_box.top_right.longitude = center_longitude + epsilon_longitude
+
+            bounding_box.bottom_left.latitude = center_latitude - epsilon_latitude
+            bounding_box.bottom_left.longitude = center_longitude - epsilon_longitude
+
+        return bounding_box
+
+    @staticmethod
+    def get_score(local_avg, global_avg):
+
+        score = 0
+        if local_avg is not None and global_avg is not None:
+            if global_avg * 0.8 <= local_avg <= global_avg * 1.2:
+                score = 50
+            elif local_avg > global_avg:
+                score = 0
+            else:
+                score = 100
+
+        return score
 
 
 RESOLVER_MONGODB = MongoDBResolver(

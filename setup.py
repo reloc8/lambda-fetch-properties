@@ -36,6 +36,7 @@ with open('version', 'r') as version:
             'dnspython',
             'pymongo',
             'graphene',
+            'pygeohash',
             private_dependency(personal_access_token=GITHUB_PERSONAL_ACCESS_TOKEN,
                                repo_user='reloc8', repo_name='lib-lambda-handler',
                                package_name='lambda_handler', package_version='1.0.0')

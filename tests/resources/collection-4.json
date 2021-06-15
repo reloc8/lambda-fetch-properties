@@ -1,0 +1,114 @@
+[
+  {
+    "_id": "d769abe7ca1d27e4129d5fd5ce137324df12dec2",
+    "price": 135000,
+    "monthly_charge": 55,
+    "floor": "3",
+    "n_rooms": 2,
+    "n_bathrooms": 1,
+    "n_parking_spaces": null,
+    "surface": 52,
+    "condition": "BEST",
+    "type": "FLAT",
+    "heating": "INDEPENDENT",
+    "ownership": "FULL",
+    "year_of_construction": 2012,
+    "published_on": "2021-01-13",
+    "location": {
+      "point": {
+        "type": "Point",
+        "coordinates": [
+          7.6634925,
+          45.1038648
+        ]
+      },
+      "geohash": "u0j2w6umh"
+    },
+    "contract": "SALE",
+    "cursor": "5ffc13f406610351150ae45a"
+  },
+  {
+    "_id": "4da033af2bc14f7c477c37a1c417b0d335a4f018",
+    "price": 350000,
+    "monthly_charge": null,
+    "floor": "1",
+    "n_rooms": 5,
+    "n_bathrooms": 2,
+    "n_parking_spaces": 1,
+    "surface": 180,
+    "condition": "BEST",
+    "type": "VILLA",
+    "heating": "INDEPENDENT",
+    "ownership": "FULL",
+    "year_of_construction": null,
+    "published_on": "2021-01-11",
+    "location": {
+      "point": {
+        "type": "Point",
+        "coordinates": [
+          7.34602,
+          45.0519856
+        ]
+      },
+      "geohash": "u0j0r1mny"
+    },
+    "contract": "SALE",
+    "cursor": "5ffc13f406610351150ae45b"
+  },
+  {
+    "_id": "2759a18c15f06900b2d2f561718be0bc8fdbc9ae",
+    "price": 279000,
+    "monthly_charge": null,
+    "floor": null,
+    "n_rooms": 5,
+    "n_bathrooms": 2,
+    "n_parking_spaces": 2,
+    "surface": 160,
+    "condition": "BEST",
+    "type": "VILLA",
+    "heating": "INDEPENDENT",
+    "ownership": "FULL",
+    "year_of_construction": null,
+    "published_on": "2021-01-11",
+    "location": {
+      "point": {
+        "type": "Point",
+        "coordinates": [
+          7.7302986,
+          45.2913656
+        ]
+      },
+      "geohash": "u0j3xvj13"
+    },
+    "contract": "SALE",
+    "cursor": "5ff9e97f114ae8feccbbe5bc"
+  },
+  {
+    "_id": "f89ca2e9c0af9fad216dc62ca3ba5f64fb8040e9",
+    "price": 149000,
+    "monthly_charge": 100,
+    "floor": "1",
+    "n_rooms": 1,
+    "n_bathrooms": 1,
+    "n_parking_spaces": null,
+    "surface": 45,
+    "condition": "BEST",
+    "type": "FLAT",
+    "heating": "CENTRAL",
+    "ownership": "FULL",
+    "year_of_construction": 1985,
+    "published_on": "2021-01-11",
+    "location": {
+      "point": {
+        "type": "Point",
+        "coordinates": [
+          7.8782353,
+          45.0343452
+        ]
+      },
+      "geohash": "u0j85q2b0"
+    },
+    "contract": "SALE",
+    "cursor": "5ff9e97f114ae8feccbbe5bd"
+  }
+]
